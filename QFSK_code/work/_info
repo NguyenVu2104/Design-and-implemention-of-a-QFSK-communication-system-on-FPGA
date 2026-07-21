@@ -1,0 +1,386 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dE:/ModelSim/ModelSim_Projects/QFSK
+vchannel
+Z0 DXx6 sv_std 3 std 0 22 VYECXdT12H8WgbUP_5Y6:3
+Z1 !s110 1747451948
+!i10b 1
+!s100 YgmHLI;CB<FY1BE=6?Hbj2
+Z2 !s11b Dg1SIo80bB@j0V0VzS_@n1
+If`9VLdgziSHQIVQcBTL4j1
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+S1
+Z4 dE:/ModelSim/ModelSim_Projects/QFSK2
+w1747206032
+8E:/ModelSim/ModelSim_Projects/QFSK2/channel.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/channel.sv
+!i122 139
+L0 1 42
+Z5 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z6 !s108 1747451948.000000
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/channel.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/channel.sv|
+!i113 1
+Z7 o-work work -sv
+Z8 tCvgOpt 0
+vcomparator
+R0
+R1
+!i10b 1
+!s100 c]<Xg24_Ug6IjD0=f;JNk0
+R2
+I:a^TPm8kMlehZ@fKLX?HT0
+R3
+S1
+R4
+Z9 w1747448146
+Z10 8E:/ModelSim/ModelSim_Projects/QFSK2/decision.sv
+Z11 FE:/ModelSim/ModelSim_Projects/QFSK2/decision.sv
+!i122 148
+L0 2 19
+R5
+r1
+!s85 0
+31
+R6
+Z12 !s107 E:/ModelSim/ModelSim_Projects/QFSK2/decision.sv|
+Z13 !s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/decision.sv|
+!i113 1
+R7
+R8
+vdata_source
+R0
+R1
+!i10b 1
+!s100 8:m[16CE7@:GnX=YL?87H2
+R2
+I`LbXMEi@lR>P_M5Ol:W>`1
+R3
+S1
+R4
+w1747447885
+8E:/ModelSim/ModelSim_Projects/QFSK2/data_source.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/data_source.sv
+!i122 140
+L0 1 70
+R5
+r1
+!s85 0
+31
+R6
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/data_source.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/data_source.sv|
+!i113 1
+R7
+R8
+vdata_source_tb
+R0
+R1
+!i10b 1
+!s100 >UV`7JoDeD_abH;RI61Y@2
+R2
+Ikh:l1T<>Z]URhR9<oVdBB3
+R3
+S1
+R4
+w1746549693
+8E:/ModelSim/ModelSim_Projects/QFSK2/data_source_tb.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/data_source_tb.sv
+!i122 141
+L0 3 65
+R5
+r1
+!s85 0
+31
+R6
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/data_source_tb.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/data_source_tb.sv|
+!i113 1
+R7
+R8
+vdds
+R0
+R1
+!i10b 1
+!s100 SaH@`CT<N02a@loD?@l523
+R2
+I3`dM3MF5=<eO0?c<Vo4Ba1
+R3
+S1
+R4
+Z14 w1746547942
+Z15 8E:/ModelSim/ModelSim_Projects/QFSK2/dds.sv
+Z16 FE:/ModelSim/ModelSim_Projects/QFSK2/dds.sv
+!i122 142
+L0 1 27
+R5
+r1
+!s85 0
+31
+R6
+Z17 !s107 E:/ModelSim/ModelSim_Projects/QFSK2/dds.sv|
+Z18 !s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/dds.sv|
+!i113 1
+R7
+R8
+vdds_tb
+R0
+R1
+!i10b 1
+!s100 5Mi]7G_6kk0^@h7c1S<UX1
+R2
+IZzN:^:IdOeh1>9o=N?=M;1
+R3
+S1
+R4
+w1746548274
+8E:/ModelSim/ModelSim_Projects/QFSK2/dds_tb.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/dds_tb.sv
+!i122 143
+L0 3 49
+R5
+r1
+!s85 0
+31
+R6
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/dds_tb.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/dds_tb.sv|
+!i113 1
+R7
+R8
+vdecision
+R0
+R1
+!i10b 1
+!s100 RKGR<A<393Klone75WPTW1
+R2
+IT1[1fc2boXK4Y4AH89FT`3
+R3
+S1
+R4
+R9
+R10
+R11
+!i122 148
+L0 23 14
+R5
+r1
+!s85 0
+31
+R6
+R12
+R13
+!i113 1
+R7
+R8
+vgoertzel_sampler
+R0
+R1
+!i10b 1
+!s100 c^4IQJ`gizOAChl7Nz1FC0
+R2
+IC<F@kC^X1F3G2c>TjR[nh3
+R3
+S1
+R4
+w1747448359
+8E:/ModelSim/ModelSim_Projects/QFSK2/goertzel.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/goertzel.sv
+!i122 144
+L0 2 104
+R5
+r1
+!s85 0
+31
+R6
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/goertzel.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/goertzel.sv|
+!i113 1
+R7
+R8
+vlevel_crossing_demod
+R0
+!s110 1747451949
+!i10b 1
+!s100 2HmoO7:_HcY9kaFn5Q7Ok1
+R2
+I4DUj2R`BS`iPL_UBM:A`31
+R3
+S1
+R4
+w1747451737
+8E:/ModelSim/ModelSim_Projects/QFSK2/level_crossing_demod.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/level_crossing_demod.sv
+!i122 149
+L0 1 62
+R5
+r1
+!s85 0
+31
+!s108 1747451949.000000
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/level_crossing_demod.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/level_crossing_demod.sv|
+!i113 1
+R7
+R8
+vphase_accumulator
+R0
+R1
+!i10b 1
+!s100 g]d:e4lVEPJRkM0?C=[?z1
+R2
+I@cmaH<n_nLJdAYIQRcHNO1
+R3
+S1
+R4
+R14
+R15
+R16
+!i122 142
+L0 30 18
+R5
+r1
+!s85 0
+31
+R6
+R17
+R18
+!i113 1
+R7
+R8
+vphase_to_amplitude
+R0
+R1
+!i10b 1
+!s100 N_[lG??cI6zA^e:eQT;Q^1
+R2
+Ie_O74REj0g1jiehPC^]A_2
+R3
+S1
+R4
+R14
+R15
+R16
+!i122 142
+L0 50 159
+R5
+r1
+!s85 0
+31
+R6
+R17
+R18
+!i113 1
+R7
+R8
+vqfsk
+R0
+R1
+!i10b 1
+!s100 LZNN@THeoCnlCccg[h^ac1
+R2
+I<1ajPg6dWDJRN[CI7G9<j2
+R3
+S1
+R4
+w1747451723
+8E:/ModelSim/ModelSim_Projects/QFSK2/qfsk.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/qfsk.sv
+!i122 145
+L0 1 41
+R5
+r1
+!s85 0
+31
+R6
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/qfsk.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/qfsk.sv|
+!i113 1
+R7
+R8
+vqfsk_tb
+R0
+R1
+!i10b 1
+!s100 :VNn>FhNGTaYYnPi:?dkT3
+R2
+IbKlEYFg4o0^OWOcj_9hKS0
+R3
+S1
+R4
+w1747451946
+8E:/ModelSim/ModelSim_Projects/QFSK2/qfsk_tb.sv
+FE:/ModelSim/ModelSim_Projects/QFSK2/qfsk_tb.sv
+!i122 146
+L0 3 51
+R5
+r1
+!s85 0
+31
+R6
+!s107 E:/ModelSim/ModelSim_Projects/QFSK2/qfsk_tb.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/qfsk_tb.sv|
+!i113 1
+R7
+R8
+vseg7_driver
+R0
+R1
+!i10b 1
+!s100 B8R]MeM<ONUZPK2Kkh^RL0
+R2
+IilA4RbMClhJ0SDm?BNZ5H1
+R3
+S1
+R4
+Z19 w1747274477
+Z20 8E:/ModelSim/ModelSim_Projects/QFSK2/wrapper.sv
+Z21 FE:/ModelSim/ModelSim_Projects/QFSK2/wrapper.sv
+!i122 147
+L0 72 20
+R5
+r1
+!s85 0
+31
+R6
+Z22 !s107 E:/ModelSim/ModelSim_Projects/QFSK2/wrapper.sv|
+Z23 !s90 -reportprogress|300|-work|work|-sv|-stats=none|E:/ModelSim/ModelSim_Projects/QFSK2/wrapper.sv|
+!i113 1
+R7
+R8
+vwrapper
+R0
+R1
+!i10b 1
+!s100 Xiz:`CRPPn@WRcjh;eE[F2
+R2
+IfBd;nR6F[YTa<DjYXB_O80
+R3
+S1
+R4
+R19
+R20
+R21
+!i122 147
+L0 1 69
+R5
+r1
+!s85 0
+31
+R6
+R22
+R23
+!i113 1
+R7
+R8

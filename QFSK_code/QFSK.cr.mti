@@ -1,0 +1,83 @@
+E:/ModelSim/ModelSim_Projects/QFSK2/qfsk_tb.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/qfsk_tb.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module qfsk_tb
+
+Top level modules:
+	qfsk_tb
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/decision.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/decision.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module comparator
+-- Compiling module decision
+
+Top level modules:
+	comparator
+	decision
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/data_source.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/data_source.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module data_source
+
+Top level modules:
+	data_source
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/level_crossing_demod.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/level_crossing_demod.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module level_crossing_demod
+
+Top level modules:
+	level_crossing_demod
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/dds.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/dds.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module dds
+-- Compiling module phase_accumulator
+-- Compiling module phase_to_amplitude
+
+Top level modules:
+	dds
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/data_source_tb.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/data_source_tb.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module data_source_tb
+
+Top level modules:
+	data_source_tb
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/goertzel.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/goertzel.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module goertzel_sampler
+
+Top level modules:
+	goertzel_sampler
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/dds_tb.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/dds_tb.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module dds_tb
+
+Top level modules:
+	dds_tb
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/qfsk.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/qfsk.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module qfsk
+
+Top level modules:
+	qfsk
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/wrapper.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/wrapper.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module wrapper
+-- Compiling module seg7_driver
+
+Top level modules:
+	wrapper
+
+} {} {}} E:/ModelSim/ModelSim_Projects/QFSK2/channel.sv {1 {vlog -work work -sv -stats=none E:/ModelSim/ModelSim_Projects/QFSK2/channel.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module channel
+
+Top level modules:
+	channel
+
+} {} {}}

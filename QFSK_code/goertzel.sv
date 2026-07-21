@@ -1,0 +1,106 @@
+// Integrated Sample and Goertzel Processing Module
+module goertzel_sampler (
+    input  logic         clk_i,
+    input  logic         rst_ni,
+    input  logic signed [16:0] signal_in,   // raw input signal
+    input  logic [7:0]   frequency,         // target frequency selection
+    output logic signed [46:0] energy      // computed energy Q2.30
+);
+    // Parameters
+    localparam int SYMBOL_DURATION    = 33_360;       // cycles per symbol period
+    localparam int SAMPLE_PER_FRAME   = 60;            // number of Goertzel samples
+    localparam int CYCLES_PER_SAMPLE  = SYMBOL_DURATION / SAMPLE_PER_FRAME; // ~556
+    localparam int Q = 15;
+    localparam int N = SAMPLE_PER_FRAME;
+
+    // Internal timing
+    logic [$clog2(SYMBOL_DURATION)-1:0]   timer_sym;      // symbol timer
+    logic [$clog2(CYCLES_PER_SAMPLE)-1:0] interval_cnt;   // interval counter
+    logic [5:0] sample_idx;
+    logic processing;
+
+    // Goertzel state
+    logic signed [22:0] s, s_prev, s_prev2;
+    logic signed [16:0] coeff;
+    logic signed [22:0] x_in;
+    logic signed [38:0] prod;
+    logic signed [22:0] scaled;
+    logic signed [46:0] e0, e1;
+    logic signed [63:0] e2;
+    logic signed [61:0] e2_scaled;
+
+    // Frequency coefficient calculation (Q1.15)
+    always_comb begin
+        case (frequency)
+            8'd12: coeff = 17'b01010101101001100;  // 12 kHz
+            8'd18: coeff = 17'b00100111100011100;  // 18 kHz
+            8'd24: coeff = 17'b11110010100111110;  // 24 kHz
+            8'd30: coeff = 17'b11000000000000000;  // 30 kHz
+            default: coeff = 17'sd0;
+        endcase
+    end
+
+    // Main processing: sampling and Goertzel
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            // Reset all state
+            timer_sym      <= '0;
+            interval_cnt   <= '0;
+            sample_idx     <= '0;
+            processing     <= 1'b0;
+            energy         <= '0;
+            s              <= '0;
+            s_prev         <= '0;
+            s_prev2        <= '0;
+        end else begin
+            // Symbol timer
+            if (timer_sym < SYMBOL_DURATION-1)
+                timer_sym <= timer_sym + 1;
+            else
+                timer_sym <= '0;
+
+
+            // Within symbol period
+            if (timer_sym < SYMBOL_DURATION-1) begin
+                // Count to next sample
+                if (interval_cnt < CYCLES_PER_SAMPLE-1) begin
+                    interval_cnt <= interval_cnt + 1;
+                end else begin
+                    interval_cnt <= '0;
+
+                    // On first sample, init Goertzel
+                    if (!processing) begin
+                        processing   <= 1'b1;
+                        sample_idx   <= 6'd0;
+                        s            <= '0;
+                        s_prev       <= '0;
+                        s_prev2      <= '0;
+                    end
+                    // Perform Goertzel step
+                    if (sample_idx < N) begin
+                        // Sign-extend input to 23-bit
+                        x_in = {{6{signal_in[16]}}, signal_in};
+                        prod   <= $signed({{6{coeff[16]}}, coeff}) * s_prev;
+                        scaled <= prod >>> Q;
+
+                        s_prev2    <= s_prev;
+                        s_prev     <= s;
+                        s          <= x_in + scaled - s_prev2;
+                        sample_idx <= sample_idx + 1;
+                    end
+                end
+            end else if (processing) begin
+                // End of symbol & processing done -> compute energy
+                e0        <= s_prev2 * s_prev2;
+                e1        <= s_prev  * s_prev;
+                e2        <= $signed({{6{coeff[16]}}, coeff}) * s_prev * s_prev2;
+                e2_scaled <= e2 >>> Q;
+                energy    <= e0 + e1 - e2_scaled;
+
+                processing   <= 1'b0;
+                interval_cnt <= '0;
+            end
+        end
+    end
+endmodule
+

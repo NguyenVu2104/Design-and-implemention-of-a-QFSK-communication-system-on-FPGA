@@ -1,0 +1,345 @@
+module data_source (
+    input logic clk_i,          // Clock input (50 MHz)
+    input logic rst_ni,         // Active-low reset
+    output logic [31:0] fsw     // Frequency selection word (32-bit)
+);
+    // Define constants
+    localparam SYMBOL_DURATION = 33350; // 33,350 cycles = 0.667 ms at 50 MHz
+    localparam TEXT_LENGTH = 1800;        // Example text length in bits (adjust as needed)
+
+    // Memory array to store the text as bits
+    logic text_memory [0:TEXT_LENGTH-1]; // Changed to memory array
+    
+    // Address counter for accessing text memory (in bits)
+    logic [$clog2(TEXT_LENGTH)-1:0] bit_addr;
+    
+    // Timer to control symbol duration
+    logic [$clog2(SYMBOL_DURATION)-1:0] symbol_timer;
+
+    // Current symbol being output
+    logic [1:0] current_symbol;
+
+    // Load example text into memory at initialization
+    initial begin
+        $readmemb("E:/symbols.txt", text_memory); // Read into memory array
+    end
+
+    // Sequential logic to manage timing and symbol output
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            symbol_timer <= '0;
+            bit_addr <= '0;
+            current_symbol <= 2'b00;
+        end else begin
+            if (symbol_timer < SYMBOL_DURATION - 1) begin
+                symbol_timer <= symbol_timer + 1;
+            end else begin
+                symbol_timer <= '0;
+                // Extract the next 2 bits from the text
+                if (bit_addr < TEXT_LENGTH - 1) begin
+                    current_symbol <= {text_memory[bit_addr], text_memory[bit_addr+1]}; // Extract 2 bits
+                    bit_addr <= bit_addr + 2;
+                end else begin
+                    current_symbol <= {text_memory[1], text_memory[0]}; // Loop back to start
+                    bit_addr <= 2; // Skip first 2 bits
+                end
+            end
+        end
+    end
+
+    // Combinational logic to map 2-bit symbol to 32-bit fsw
+    always_comb begin
+        case (current_symbol)
+            2'b00: fsw = 32'd1030792;  // 12 kHz
+            2'b01: fsw = 32'd1546188;  // 18 kHz
+            2'b10: fsw = 32'd2061584;  // 24 kHz
+            2'b11: fsw = 32'd2576980;  // 30 kHz
+            default: fsw = 32'd0; // Default to 12 kHz
+        endcase
+    end
+endmodule
+
+module dds (
+    input logic clk_i,           // System clock
+    input logic rst_ni,           // Reset signal
+    input logic [31:0] fsw,    // Frequency Control
+
+    output logic signed [15:0] sine_out     // 16-bit sine wave amplitude from LUT (signed)
+);
+
+    // Internal signals
+    logic [9:0] phase_out;     // 10-bit phase output from Phase Accumulator
+
+    // Phase Accumulator Module
+    phase_accumulator pa (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .fsw(fsw),
+        .phase_out(phase_out)
+    );
+
+    // Phase-to-Amplitude Module (Sine LUT)
+    phase_to_amplitude pta (
+        .clk_i(clk_i),
+        .phase_in(phase_out),
+        .sine_out(sine_out)
+    );
+
+endmodule
+
+// Phase Accumulator Module
+module phase_accumulator (
+    input logic clk_i,
+    input logic rst_ni,
+    input logic [31:0] fsw,
+    output logic [9:0] phase_out
+);
+    logic [31:0] phase_acc;
+
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            phase_acc <= 32'd0;
+            phase_out <= 10'd0;
+        end else begin
+            phase_acc <= phase_acc + fsw;
+            phase_out <= phase_acc[31:22]; // Extract 10 MSBs for LUT addressing
+        end
+    end
+endmodule
+
+// Phase-to-Amplitude Module (Sine LUT)
+module phase_to_amplitude (
+    input logic clk_i,
+    input logic [9:0] phase_in,
+    output logic [15:0] sine_out
+);
+    // LUT as an array with 1024 points, 14-bit signed values
+    logic [15:0] lut [0:1023] = '{
+     0,   201,   402,   603,   804,  1005,  1206,
+  1407,  1608,  1809,  2009,  2210,  2410,  2611,
+  2811,  3012,  3212,  3412,  3612,  3811,  4011,
+  4210,  4410,  4609,  4808,  5007,  5205,  5404,
+  5602,  5800,  5998,  6195,  6393,  6590,  6786,
+  6983,  7179,  7375,  7571,  7767,  7962,  8157,
+  8351,  8545,  8739,  8933,  9126,  9319,  9512,
+  9704,  9896, 10087, 10278, 10469, 10659, 10849,
+ 11039, 11228, 11417, 11605, 11793, 11980, 12167,
+ 12353, 12539, 12725, 12910, 13094, 13279, 13462,
+ 13645, 13828, 14010, 14191, 14372, 14553, 14732,
+ 14912, 15090, 15269, 15446, 15623, 15800, 15976,
+ 16151, 16325, 16499, 16673, 16846, 17018, 17189,
+ 17360, 17530, 17700, 17869, 18037, 18204, 18371,
+ 18537, 18703, 18868, 19032, 19195, 19357, 19519,
+ 19680, 19841, 20000, 20159, 20317, 20475, 20631,
+ 20787, 20942, 21096, 21250, 21403, 21554, 21705,
+ 21856, 22005, 22154, 22301, 22448, 22594, 22739,
+ 22884, 23027, 23170, 23311, 23452, 23592, 23731,
+ 23870, 24007, 24143, 24279, 24413, 24547, 24680,
+ 24811, 24942, 25072, 25201, 25329, 25456, 25582,
+ 25708, 25832, 25955, 26077, 26198, 26319, 26438,
+ 26556, 26674, 26790, 26905, 27019, 27133, 27245,
+ 27356, 27466, 27575, 27683, 27790, 27896, 28001,
+ 28105, 28208, 28310, 28411, 28510, 28609, 28706,
+ 28803, 28898, 28992, 29085, 29177, 29268, 29358,
+ 29447, 29534, 29621, 29706, 29791, 29874, 29956,
+ 30037, 30117, 30195, 30273, 30349, 30424, 30498,
+ 30571, 30643, 30714, 30783, 30852, 30919, 30985,
+ 31050, 31113, 31176, 31237, 31297, 31356, 31414,
+ 31470, 31526, 31580, 31633, 31685, 31736, 31785,
+ 31833, 31880, 31926, 31971, 32014, 32057, 32098,
+ 32137, 32176, 32213, 32250, 32285, 32318, 32351,
+ 32382, 32412, 32441, 32469, 32495, 32521, 32545,
+ 32567, 32589, 32609, 32628, 32646, 32663, 32678,
+ 32692, 32705, 32717, 32728, 32737, 32745, 32752,
+ 32757, 32761, 32765, 32766, 32767, 32766, 32765,
+ 32761, 32757, 32752, 32745, 32737, 32728, 32717,
+ 32705, 32692, 32678, 32663, 32646, 32628, 32609,
+ 32589, 32567, 32545, 32521, 32495, 32469, 32441,
+ 32412, 32382, 32351, 32318, 32285, 32250, 32213,
+ 32176, 32137, 32098, 32057, 32014, 31971, 31926,
+ 31880, 31833, 31785, 31736, 31685, 31633, 31580,
+ 31526, 31470, 31414, 31356, 31297, 31237, 31176,
+ 31113, 31050, 30985, 30919, 30852, 30783, 30714,
+ 30643, 30571, 30498, 30424, 30349, 30273, 30195,
+ 30117, 30037, 29956, 29874, 29791, 29706, 29621,
+ 29534, 29447, 29358, 29268, 29177, 29085, 28992,
+ 28898, 28803, 28706, 28609, 28510, 28411, 28310,
+ 28208, 28105, 28001, 27896, 27790, 27683, 27575,
+ 27466, 27356, 27245, 27133, 27019, 26905, 26790,
+ 26674, 26556, 26438, 26319, 26198, 26077, 25955,
+ 25832, 25708, 25582, 25456, 25329, 25201, 25072,
+ 24942, 24811, 24680, 24547, 24413, 24279, 24143,
+ 24007, 23870, 23731, 23592, 23452, 23311, 23170,
+ 23027, 22884, 22739, 22594, 22448, 22301, 22154,
+ 22005, 21856, 21705, 21554, 21403, 21250, 21096,
+ 20942, 20787, 20631, 20475, 20317, 20159, 20000,
+ 19841, 19680, 19519, 19357, 19195, 19032, 18868,
+ 18703, 18537, 18371, 18204, 18037, 17869, 17700,
+ 17530, 17360, 17189, 17018, 16846, 16673, 16499,
+ 16325, 16151, 15976, 15800, 15623, 15446, 15269,
+ 15090, 14912, 14732, 14553, 14372, 14191, 14010,
+ 13828, 13645, 13462, 13279, 13094, 12910, 12725,
+ 12539, 12353, 12167, 11980, 11793, 11605, 11417,
+ 11228, 11039, 10849, 10659, 10469, 10278, 10087,
+  9896,  9704,  9512,  9319,  9126,  8933,  8739,
+  8545,  8351,  8157,  7962,  7767,  7571,  7375,
+  7179,  6983,  6786,  6590,  6393,  6195,  5998,
+  5800,  5602,  5404,  5205,  5007,  4808,  4609,
+  4410,  4210,  4011,  3811,  3612,  3412,  3212,
+  3012,  2811,  2611,  2410,  2210,  2009,  1809,
+  1608,  1407,  1206,  1005,   804,   603,   402,
+   201,     0,  -201,  -402,  -603,  -804, -1005,
+ -1206, -1407, -1608, -1809, -2009, -2210, -2410,
+ -2611, -2811, -3012, -3212, -3412, -3612, -3811,
+ -4011, -4210, -4410, -4609, -4808, -5007, -5205,
+ -5404, -5602, -5800, -5998, -6195, -6393, -6590,
+ -6786, -6983, -7179, -7375, -7571, -7767, -7962,
+ -8157, -8351, -8545, -8739, -8933, -9126, -9319,
+ -9512, -9704, -9896,-10087,-10278,-10469,-10659,
+-10849,-11039,-11228,-11417,-11605,-11793,-11980,
+-12167,-12353,-12539,-12725,-12910,-13094,-13279,
+-13462,-13645,-13828,-14010,-14191,-14372,-14553,
+-14732,-14912,-15090,-15269,-15446,-15623,-15800,
+-15976,-16151,-16325,-16499,-16673,-16846,-17018,
+-17189,-17360,-17530,-17700,-17869,-18037,-18204,
+-18371,-18537,-18703,-18868,-19032,-19195,-19357,
+-19519,-19680,-19841,-20000,-20159,-20317,-20475,
+-20631,-20787,-20942,-21096,-21250,-21403,-21554,
+-21705,-21856,-22005,-22154,-22301,-22448,-22594,
+-22739,-22884,-23027,-23170,-23311,-23452,-23592,
+-23731,-23870,-24007,-24143,-24279,-24413,-24547,
+-24680,-24811,-24942,-25072,-25201,-25329,-25456,
+-25582,-25708,-25832,-25955,-26077,-26198,-26319,
+-26438,-26556,-26674,-26790,-26905,-27019,-27133,
+-27245,-27356,-27466,-27575,-27683,-27790,-27896,
+-28001,-28105,-28208,-28310,-28411,-28510,-28609,
+-28706,-28803,-28898,-28992,-29085,-29177,-29268,
+-29358,-29447,-29534,-29621,-29706,-29791,-29874,
+-29956,-30037,-30117,-30195,-30273,-30349,-30424,
+-30498,-30571,-30643,-30714,-30783,-30852,-30919,
+-30985,-31050,-31113,-31176,-31237,-31297,-31356,
+-31414,-31470,-31526,-31580,-31633,-31685,-31736,
+-31785,-31833,-31880,-31926,-31971,-32014,-32057,
+-32098,-32137,-32176,-32213,-32250,-32285,-32318,
+-32351,-32382,-32412,-32441,-32469,-32495,-32521,
+-32545,-32567,-32589,-32609,-32628,-32646,-32663,
+-32678,-32692,-32705,-32717,-32728,-32737,-32745,
+-32752,-32757,-32761,-32765,-32766,-32767,-32766,
+-32765,-32761,-32757,-32752,-32745,-32737,-32728,
+-32717,-32705,-32692,-32678,-32663,-32646,-32628,
+-32609,-32589,-32567,-32545,-32521,-32495,-32469,
+-32441,-32412,-32382,-32351,-32318,-32285,-32250,
+-32213,-32176,-32137,-32098,-32057,-32014,-31971,
+-31926,-31880,-31833,-31785,-31736,-31685,-31633,
+-31580,-31526,-31470,-31414,-31356,-31297,-31237,
+-31176,-31113,-31050,-30985,-30919,-30852,-30783,
+-30714,-30643,-30571,-30498,-30424,-30349,-30273,
+-30195,-30117,-30037,-29956,-29874,-29791,-29706,
+-29621,-29534,-29447,-29358,-29268,-29177,-29085,
+-28992,-28898,-28803,-28706,-28609,-28510,-28411,
+-28310,-28208,-28105,-28001,-27896,-27790,-27683,
+-27575,-27466,-27356,-27245,-27133,-27019,-26905,
+-26790,-26674,-26556,-26438,-26319,-26198,-26077,
+-25955,-25832,-25708,-25582,-25456,-25329,-25201,
+-25072,-24942,-24811,-24680,-24547,-24413,-24279,
+-24143,-24007,-23870,-23731,-23592,-23452,-23311,
+-23170,-23027,-22884,-22739,-22594,-22448,-22301,
+-22154,-22005,-21856,-21705,-21554,-21403,-21250,
+-21096,-20942,-20787,-20631,-20475,-20317,-20159,
+-20000,-19841,-19680,-19519,-19357,-19195,-19032,
+-18868,-18703,-18537,-18371,-18204,-18037,-17869,
+-17700,-17530,-17360,-17189,-17018,-16846,-16673,
+-16499,-16325,-16151,-15976,-15800,-15623,-15446,
+-15269,-15090,-14912,-14732,-14553,-14372,-14191,
+-14010,-13828,-13645,-13462,-13279,-13094,-12910,
+-12725,-12539,-12353,-12167,-11980,-11793,-11605,
+-11417,-11228,-11039,-10849,-10659,-10469,-10278,
+-10087, -9896, -9704, -9512, -9319, -9126, -8933,
+ -8739, -8545, -8351, -8157, -7962, -7767, -7571,
+ -7375, -7179, -6983, -6786, -6590, -6393, -6195,
+ -5998, -5800, -5602, -5404, -5205, -5007, -4808,
+ -4609, -4410, -4210, -4011, -3811, -3612, -3412,
+ -3212, -3012, -2811, -2611, -2410, -2210, -2009,
+ -1809, -1608, -1407, -1206, -1005,  -804,  -603,
+  -402,  -201 };
+
+    always_ff @(posedge clk_i) begin
+        sine_out <= lut[phase_in];
+    end
+endmodule
+
+module channel (
+    input logic clk_i,                    // Clock input
+    input logic rst_ni,                   // Active-low reset
+    input logic signed [15:0] signal_in,  // Input signal (e.g., sine_out from DDS)
+    output logic signed [16:0] signal_out // Output signal with added noise
+);
+    // Parameters
+    localparam LFSR_MIN_VALUE = 12'd2000; // Minimum LFSR value
+
+    // Internal signals
+    logic [11:0] lfsr_reg;                // LFSR register (12-bit)
+    logic [11:0] lfsr_constrained;        // LFSR value constrained to be >= 2000
+
+    // LFSR for pseudo-random noise generation (12-bit)
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            lfsr_reg <= 12'hACE;          // Initial seed (0xACE = 2766, above 2000)
+        end else begin
+            // Feedback polynomial: x^12 + x^11 + x^10 + x^4 + 1
+            lfsr_reg <= {lfsr_reg[10:0], lfsr_reg[11] ^ lfsr_reg[10] ^ lfsr_reg[9] ^ lfsr_reg[3]};
+        end
+    end
+
+    // Constrain LFSR value to be >= 2000
+    always_comb begin
+        if (lfsr_reg < LFSR_MIN_VALUE) begin
+            lfsr_constrained = LFSR_MIN_VALUE;
+        end else begin
+            lfsr_constrained = lfsr_reg;
+        end
+    end
+
+    // Add noise to the input signal
+    always_ff @(posedge clk_i) begin
+        if (!rst_ni) begin
+            signal_out <= 17'd0;
+        end else begin
+            // Directly add LFSR value as noise (signal_out is 21-bit to accommodate the wider range)
+            signal_out <= $signed({{1{signal_in[15]}}, signal_in}) + $signed({{5{lfsr_constrained[11]}}, lfsr_constrained});
+        end
+    end
+endmodule
+
+module qfsk (
+    input logic clk_i,                    // Clock input (23.04 MHz)
+    input logic rst_ni,                   // Active-low reset
+    output logic [31:0] fsw,              // Frequency selection word from data_source
+    output logic signed [15:0] sine_out,  // Sine wave output from DDS
+    output logic signed [16:0] signal_with_noise, // Signal with noise (16-bit for testbench)
+    output logic [1:0] original_symbol,   // Original symbol from data_source
+    output logic [1:0] recovered_symbol,  // Recovered symbol from decision
+);
+
+    // Instantiate submodules
+    data_source ds (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .fsw(fsw)
+    );
+    dds dds_inst (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .fsw(fsw),
+        .sine_out(sine_out)
+    );
+    channel chan (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .signal_in(sine_out),
+        .signal_out(signal_with_noise)
+    );
+
+    // Assign original_symbol from data_source
+    assign original_symbol = ds.current_symbol;
+endmodule

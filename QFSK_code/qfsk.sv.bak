@@ -1,0 +1,41 @@
+module qfsk (
+    input logic clk_i,                    // Clock input (50 MHz)
+    input logic rst_ni,                   // Active-low reset
+    output logic [31:0] fsw,              // Frequency selection word
+    output logic signed [15:0] sine_out,  // Sine wave output
+    output logic signed [16:0] signal_with_noise, // Signal with noise
+    output logic [1:0] original_symbol,   // Original QFSK symbol
+    output logic [1:0] recovered_symbol   // Recovered QFSK symbol
+);
+
+    // Instantiate submodules
+    data_source ds (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .fsw(fsw)
+    );
+
+    dds dds_inst (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .fsw(fsw),
+        .sine_out(sine_out)
+    );
+
+    channel chan (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .signal_in(sine_out),
+        .signal_out(signal_with_noise)
+    );
+
+    level_crossing_demod lcd (
+        .clk_i(clk_i),
+        .rst_ni(rst_ni),
+        .signal_in(signal_with_noise),
+        .symbol(recovered_symbol)
+    );
+
+    // Assign original symbol from data_source
+    assign original_symbol = ds.current_symbol;
+endmodule
